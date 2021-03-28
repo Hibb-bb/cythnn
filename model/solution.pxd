@@ -27,6 +27,10 @@ cdef class Solution:
     cdef int MAX_SIGMOID, SIGMOID_TABLE
     cdef cREAL *sigmoidtable    # fast sigmoid lookup table
 
+    # Dennis 
+    cdef cREAL *word_freq # word frequency based on word index
+    # ------
+
     cdef uLONG *progress         # progress, per thread
     cdef long totalwords        # to estimate the total number of words to be processed,
     cdef int threads            # number of concurrent threads used for learning

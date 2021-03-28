@@ -13,13 +13,19 @@ class Word2Vec(Pipe):
     # use Negative Sampling (NS) instead of HS when negative > 0
     # Use HS caching when updatecacherate is set > 0
     def transform(self):
+        # Dennis
+        self.use_method = self.model.reg
+        # ------
+
         if hasattr(self.model, 'cbow') and self.model.cbow == 1 and hasattr(self.model, 'negative'):
             return CbowNS(self.pipeid, self.learner)
         if hasattr(self.model, 'cbow') and self.model.cbow == 1:
             return CbowHS(self.pipeid, self.learner)
         if hasattr(self.model, 'negative'):
             if hasattr(self.model, 'cachewords') and self.model.cachewords > 0:
-                return SkipgramNScached(self.pipeid, self.learner)
+                # Dennis use_method
+                return SkipgramNScached(self.pipeid, self.learner, self.use_method)
+                # ------
             else:
                 return SkipgramNS(self.pipeid, self.learner)
         if hasattr(self.model, 'cacheinner') and self.model.cacheinner > 0:

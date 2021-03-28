@@ -69,7 +69,7 @@ class Model:
         self.vocsize = len(vocab)
         # output size of the w2v model, can be modified by other modules (e.g. HS trains against a Huffmann tree instead of the vocabulary)
         # Dennis
-        self.word_freq = np.array(list(self.vocab.word_freq.values()))
+        self.word_freq = np.ndarray(list(self.vocab.word_freq.values()))
         # ------
         self.outputsize = len(vocab)
 

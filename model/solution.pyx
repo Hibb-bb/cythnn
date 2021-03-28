@@ -31,6 +31,11 @@ cdef class Solution:
         self.w_output = allocInt(self.matrices)           # number of columns in each matrix
         self.layerfw = allocRealP((self.matrices + 1) * self.threads)      # pointers to fw and bw layers, instantiated on request
         self.layerbw = allocRealP((self.matrices + 1) * self.threads)
+        
+        # Dennis
+        self.word_freq = toRealArray(self.model.word_freq)
+        # ------
+
         for l in range(self.matrices):
             self.w[l] = toRealArray(solution[l]);          # layers are numbered 0,..,n weight matrices 0,..,(n-1)
             self.w_input[l] = solution[l].shape[0]

@@ -8,6 +8,10 @@ cdef class SkipgramNS(CPipe):
         int vocabularysize         # number of words in the vocabulary
         int negative               # number of negative samples used for regularization
         uLONG* random  # for sampling random numbers
+        
+        # Dennis
+        int add_reg
+        # -----
 
         # convenient lookup table for sigmoid function
         int MAX_SIGMOID, SIGMOID_TABLE

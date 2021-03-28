@@ -17,10 +17,15 @@ cdef cREAL fmONE = -1.0
 
 # learns embeddings using skipgrams with negative samples
 cdef class SkipgramNS(CPipe):
-    def __init__(self, pipeid, learner):
+    def __init__(self, pipeid, learner, reg=0):
         CPipe.__init__(self, pipeid, learner)
         self.negative = self.model.negative             # the number of negative samples per word
         self.vocabularysize = len(self.model.vocab)
+        
+        # Dennis
+        self.add_reg = reg # add reg
+        # ------
+
 
         self.vectorsize = self.solution.getLayerSize(1) # size of hidden layer
         self.w0 = self.solution.w[0]                    # the lookup matrix for the word embeddings
