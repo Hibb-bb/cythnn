@@ -23,6 +23,10 @@ cdef class Solution:
         self.SIGMOID_TABLE = 1000
         self.MAX_SIGMOID = 6
         self.sigmoidtable = createSigmoidTable(self.SIGMOID_TABLE, self.MAX_SIGMOID)   # used for fast lookup of sigmoid function
+        
+        # Dennis
+        self.word_freq = toRealArray(model.word_freq)
+        # -----
 
     def setSolution(self, solution):
         self.matrices = len(solution)                   # number of weight matrices in the model
@@ -31,9 +35,9 @@ cdef class Solution:
         self.w_output = allocInt(self.matrices)           # number of columns in each matrix
         self.layerfw = allocRealP((self.matrices + 1) * self.threads)      # pointers to fw and bw layers, instantiated on request
         self.layerbw = allocRealP((self.matrices + 1) * self.threads)
-        
+ 
         # Dennis
-        self.word_freq = toRealArray(self.model.word_freq)
+        # self.word_freq = toRealArray(self.model.word_freq)
         # ------
 
         for l in range(self.matrices):
