@@ -25,6 +25,7 @@ class Model:
                         downsample=0,       # parameter for downsampling frequent terms (0=no downsampling)
                         quiet=0,            # set to 1 to supress output
                         blockedmode=False,  # set to True to force the model finishing one iteration before continuing to the next
+                        reg=False,
                         **kwargs):
         self.__dict__.update(kwargs)
         self.input = input;
@@ -43,6 +44,10 @@ class Model:
         self.downsample = downsample        # typical settings: 0, 10e-3 or 10e-5
         self.quiet = quiet
         self.blockedmode = blockedmode
+        
+        # Dennis 
+        self.reg = reg
+        # -----
 
         # number of cores/threads to use in multithreading mode, by default for every core two
         # threads are used to overcome performance loss by memory blocks
@@ -63,6 +68,9 @@ class Model:
         # number of unique words in vocab, vocab.totalwords contains the total count
         self.vocsize = len(vocab)
         # output size of the w2v model, can be modified by other modules (e.g. HS trains against a Huffmann tree instead of the vocabulary)
+        # Dennis
+        self.word_freq = np.array(list(self.vocab.word_freq.values()))
+        # ------
         self.outputsize = len(vocab)
 
     def setSolution(self, matrices):

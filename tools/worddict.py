@@ -96,6 +96,12 @@ class Vocabulary(defaultdict):
                 else:
                     words[0].count = count
 
+        # Dennis
+        self.word_freq = {}
+        for word in words:
+            self.word_freq[word.index] = word.count
+        # ------
+
         totalwords = 0
         for word in words:
             self.__setitem__(word.word, word)
