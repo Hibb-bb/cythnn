@@ -10,7 +10,7 @@ from pipe.ContextWindows import contextWindow
 # Word2Vec uses Skipgram by default, set negative > 0 to use negative sampling instead of Hierarchical Softmax
 if __name__ == "__main__":
     m = Model(alpha=0.025, vectorsize=100,
-                 input="data/text8",
+                 input="data/test.txt",
                  inputrange=None, # means all
                  build=[ buildvocab ],
                  pipeline=[ createW2VInputTasks, convertWordIds, DownSample, contextWindow, Word2Vec ],

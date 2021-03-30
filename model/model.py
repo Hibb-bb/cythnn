@@ -81,6 +81,7 @@ class Model:
                 reg_weight.append(w)
 
         self.word_freq = np.array(reg_weight)
+        print('word freq size', len(self.word_freq))
         # ------
         
         self.outputsize = len(vocab)
