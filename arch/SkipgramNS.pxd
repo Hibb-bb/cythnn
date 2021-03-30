@@ -11,6 +11,7 @@ cdef class SkipgramNS(CPipe):
         
         # Dennis
         int add_reg
+        cREAL *word_freq
         # -----
 
         # convenient lookup table for sigmoid function

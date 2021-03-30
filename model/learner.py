@@ -53,7 +53,7 @@ class Learner:
             t.start()
 
         starttime = time()
-        while not self.finished():
+        while not self.finished(): # looping over epochs - Dennis
             sleep(2)   # update every 2 seconds
             p = solution.getProgressPy();
             if p > 0 and self.model.quiet == 0:

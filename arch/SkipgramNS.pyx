@@ -24,6 +24,8 @@ cdef class SkipgramNS(CPipe):
         
         # Dennis
         self.add_reg = reg # add reg
+        # self.add_reg = iZERO # 0 is not; 1 is add
+        self.word_freq = self.solution.word_freq # word frequency
         # ------
 
 
@@ -82,8 +84,8 @@ cdef class SkipgramNS(CPipe):
                     if i != j:
 
                         last_word = words[j]
-                        l0 = last_word * self.vectorsize
-
+                        l0 = last_word * self.vectorsize # word that we try to train - Dennis
+                        printf("%d\n",l0)
                         # initialize hidden layer, to aggregate updates for the current last_word
                         memset(hiddenlayer, 0, self.vectorsize * 4)
 
@@ -103,10 +105,13 @@ cdef class SkipgramNS(CPipe):
                                 exp = 0
 
                             # index for last_word in weight matrix w0, inner node in w1
-                            l1 = word * self.vectorsize
+                            l1 = word * self.vectorsize # other word - Dennis
 
                             # energy emitted to inner tree node (output layer)
                             f = sdot( &self.vectorsize, &self.w0[l0], &iONE, &self.w1[l1], &iONE)
+                            
+                            # if(self.add_reg != iZERO):
+                            #     f = f + self.word_freq[l0]*sdot( &self.vectorsize, &self.w0[l0], &iONE, &self.w0[l0], &iONE)
 
                             # compute the gradient * alpha
                             if f > self.MAX_SIGMOID:

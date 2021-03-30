@@ -68,9 +68,21 @@ class Model:
         # number of unique words in vocab, vocab.totalwords contains the total count
         self.vocsize = len(vocab)
         # output size of the w2v model, can be modified by other modules (e.g. HS trains against a Huffmann tree instead of the vocabulary)
+        
         # Dennis
-        self.word_freq = np.array(list(self.vocab.word_freq.values()))
+        reg_weight = []
+        min_freq = min(list(self.vocab.word_freq.values()))
+        for value in list(self.vocab.word_freq.values()):
+            if value > 200:
+                reg_weight.append(0)
+            else:
+                w = (value-min_freq+2)/20
+                w = 1/np.log(w)
+                reg_weight.append(w)
+
+        self.word_freq = np.array(reg_weight)
         # ------
+        
         self.outputsize = len(vocab)
 
     def setSolution(self, matrices):
