@@ -27,7 +27,7 @@ class Word2Vec(Pipe):
                 return SkipgramNScached(self.pipeid, self.learner, self.use_method)
                 # ------
             else:
-                return SkipgramNS(self.pipeid, self.learner)
+                return SkipgramNS(self.pipeid, self.learner, self.use_method)
         if hasattr(self.model, 'cacheinner') and self.model.cacheinner > 0:
             return SkipgramHScached(self.pipeid, self.learner)
         return SkipgramHS(self.pipeid, self.learner)

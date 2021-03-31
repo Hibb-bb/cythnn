@@ -3,8 +3,8 @@ from pipe.cpipe cimport CPipe
 from tools.word2vec import createW2V
 from numpy import uint64
 from libc.string cimport memset
-from tools.blas cimport sdot, saxpy
-from libc.math cimport pow
+from tools.blas cimport sdot, saxpy, scopy
+from libc.math cimport pow, isnan
 from libc.stdio cimport *
 
 cdef uLONG rand_prime = uint64(25214903917)
@@ -27,7 +27,6 @@ cdef class SkipgramNS(CPipe):
         # self.add_reg = iZERO # 0 is not; 1 is add
         self.word_freq = self.solution.word_freq # word frequency
         # ------
-
 
         self.vectorsize = self.solution.getLayerSize(1) # size of hidden layer
         self.w0 = self.solution.w[0]                    # the lookup matrix for the word embeddings
@@ -64,6 +63,12 @@ cdef class SkipgramNS(CPipe):
         createW2V(self.model, self.model.vocsize, self.model.vocsize)
 
     def feed(self, threadid, task):
+        
+        # Dennis
+        if(task.add_reg == 1):
+            self.add_reg = 1
+        # ------
+
         self.process(threadid, toIntArray(task.words), toIntArray(task.clower), toIntArray(task.cupper), task.length)
 
     # process is called with a center position in words (array of word ids), and clower and
@@ -73,7 +78,7 @@ cdef class SkipgramNS(CPipe):
     cdef void process(self, int threadid, cINT *words, cINT *clower, cINT *cupper, int length):
         cdef:
             int word, last_word, i, d, l0, l1, exp, wordsprocessed = 0
-            cREAL f, g
+            cREAL f, g, w, self_dot, nf
             float alpha = self.solution.updateAlpha(threadid, 0)
             cREAL *hiddenlayer = self.solution.getLayerBw(threadid, 1)
 
@@ -84,10 +89,7 @@ cdef class SkipgramNS(CPipe):
                     if i != j:
 
                         last_word = words[j]
-                        printf("last word %d \n", last_word)
                         l0 = last_word * self.vectorsize # word that we try to train (last word) - Dennis
-                        printf("word id %d\n",l0)
-                        raise ValueError
                         # initialize hidden layer, to aggregate updates for the current last_word
                         memset(hiddenlayer, 0, self.vectorsize * 4)
 
@@ -111,10 +113,23 @@ cdef class SkipgramNS(CPipe):
 
                             # energy emitted to inner tree node (output layer)
                             f = sdot( &self.vectorsize, &self.w0[l0], &iONE, &self.w1[l1], &iONE)
-                            
-                            if(self.add_reg != iZERO):
-                                f = f + self.word_freq[last_word]*sdot( &self.vectorsize, &self.w0[l0], &iONE, &self.w0[l0], &iONE)
+                            # printf('loss %.7g\n', f) 
+                            # Dennis 
+                            self_dot = sdot(&self.vectorsize, &self.w0[l0], &iONE, &self.w0[l0], &iONE)
+                            # printf('self inner %.7g\n', self_dot)
 
+                            if(self.add_reg == 1):
+                                w = self.word_freq[last_word]
+                                # printf('weight %.7g index %d ', w, last_word)
+                                # if(isnan(w)):
+                                #     w = fZERO
+                                # printf('weight %.7g\n',w)
+                                nf = self_dot*w
+                                # printf('new loss %.7g\n',nf )
+                                saxpy(&iONE, &fONE, &nf, &iONE, &f, &iONE)
+                                # printf('new f %.7g\n\n', f)
+                                # f = &nf
+                                # pass
                             # compute the gradient * alpha
                             if f > self.MAX_SIGMOID:
                                 if exp == 1:
@@ -140,4 +155,5 @@ cdef class SkipgramNS(CPipe):
                     alpha = self.solution.updateAlpha(threadid, wordsprocessed)
                     wordsprocessed = 0
             self.solution.updateAlpha(threadid, wordsprocessed)
+            # printf('update done!\n')
 

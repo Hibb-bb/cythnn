@@ -17,6 +17,7 @@ class Learner:
         self.iterations = model.iterations
         self.tasks = model.tasks
         self._lock_tasks = threading.Lock()
+        self.reg = 0
 
     # Builds the vocabulay, then build the learning pipeline, and push the inputs through the pipeline.
     def run(self):
@@ -51,11 +52,18 @@ class Learner:
             t.daemon = True
             threads.append(t)
             t.start()
+        
 
         starttime = time()
         while not self.finished(): # looping over epochs - Dennis
             sleep(2)   # update every 2 seconds
             p = solution.getProgressPy();
+           
+            # Dennis
+            if self.model.method == 'reg' and self.currentiteration >= 3:
+                self.reg = 1
+            # ------
+
             if p > 0 and self.model.quiet == 0:
                 wps = self.getTotalWords() * self.iterations * p / (time() - starttime)
                 alpha = solution.getCurrentAlpha()
@@ -109,6 +117,7 @@ class Learner:
         return self.currentiteration >= self.iterations
 
     def createPipes(self):
+        print('====pipe!====')
         self.pipe = []
         pipeid = 0
         for i in range(len(self.model.pipeline)):
@@ -129,12 +138,20 @@ class Learner:
 # the trainer on that chunk, until there is no more input
 def learnThread(threadid, learner):
     while not learner.finished(): # pick a task and process
-        task = learner.getTask(threadid)
+        task = learner.getTask(threadid) 
         if task is not None:
+
+            if(learner.reg == 1):
+                task.add_reg = 1
+
             if threadid in learner.inactivethreads:
                 learner.inactivethreads.remove(threadid)
             learner.pipe[task.pipeid].feed(threadid, task)
             learner.finishedTask(threadid, task)
         else:
+
+            if(learner.reg == 1):
+                task.add_reg = 1
+
             learner.inactivethreads.add(threadid)
             sleep(0.1)

@@ -26,4 +26,3 @@ class Pipe:
 
     def addTask(self, task):
         self.learner.addTask(task)
-

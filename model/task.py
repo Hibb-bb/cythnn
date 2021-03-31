@@ -12,6 +12,10 @@ class Task:
         self.atiteration = atiteration
         self.atpipeid = atpipeid
 
+        # Dennis
+        self.add_reg = 0 # 0: not add; 1: add reg w
+        # ------
+
     def isBlocked(self, learner):
         if (self.atiteration is None or self.atiteration <= learner.currentiteration):
             if (self.atpipeid is None or self.atpipeid == learner.currentpipeid or self.atiteration < learner.currentiteration):

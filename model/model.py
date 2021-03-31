@@ -24,8 +24,9 @@ class Model:
                         cacheinner=0,       # number of most frequent inner nodes to cache to avoid memory collisions between threads
                         downsample=0,       # parameter for downsampling frequent terms (0=no downsampling)
                         quiet=0,            # set to 1 to supress output
-                        blockedmode=False,  # set to True to force the model finishing one iteration before continuing to the next
-                        reg=False,
+                        blockedmode=True,  # set to True to force the model finishing one iteration before continuing to the next
+                        reg=0,
+                        method='normal',    # 'normal' = no reg, 'reg' = add reg.
                         **kwargs):
         self.__dict__.update(kwargs)
         self.input = input;
@@ -47,6 +48,7 @@ class Model:
         
         # Dennis 
         self.reg = reg
+        self.method = method
         # -----
 
         # number of cores/threads to use in multithreading mode, by default for every core two
@@ -76,10 +78,10 @@ class Model:
             if value > 200:
                 reg_weight.append(0)
             else:
-                w = (value-min_freq+2)/20
-                w = 1/np.log(w)
+                w = ((value-min_freq+1)/20)+1
+                w = 0.01/np.log(w)
                 reg_weight.append(w)
-
+        print('max weight',max(reg_weight))
         self.word_freq = np.array(reg_weight)
         print('word freq size', len(self.word_freq))
         # ------

@@ -14,7 +14,7 @@ if __name__ == "__main__":
                  inputrange=None, # means all
                  build=[ buildvocab ],
                  pipeline=[ createW2VInputTasks, convertWordIds, DownSample, contextWindow, Word2Vec ],
-                 mintf=5, cores=2, threads=3, windowsize=5, downsample=0.001, iterations=1, negative=5)
+                 mintf=5, cores=1, threads=1, windowsize=5, downsample=0.001, iterations=5, negative=5, reg=1, method='reg')
     m.run()
     save("results/vectors.sgns.bin", m, binary=True)
-
+# 
