@@ -142,8 +142,6 @@ cdef class SkipgramNS(CPipe):
                             else:
                                 g = alpha * (exp - self.sigmoidtable[<int>((f + self.MAX_SIGMOID) * (self.SIGMOID_TABLE / self.MAX_SIGMOID / 2))])
                             
-                            # if l0 == 2400 and d == 0 and word == 5:
-                                # printf('orange %f %d\n',f,word)
                             if nf > self.MAX_SIGMOID:
                                 if exp == 1:
                                     continue
