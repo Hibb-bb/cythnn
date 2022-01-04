@@ -94,7 +94,6 @@ class Eval:
             reg_res.append(reg_sim*100)
             ans.append(float(score))
 
-
         gold_corr, _ = pearsonr(ans, gold_res)
         reg_corr, _ = pearsonr(ans, reg_res)
 
@@ -142,10 +141,6 @@ class Eval:
         print('*****************************************\nskip gram spearman correlation', sp_gold*100)
         print('*****************************************\nour method spearman correlation', sp_reg*100)
         
-
-            
-
-
     def eval_rw(self):
 
         # scale = 4
@@ -175,9 +170,6 @@ class Eval:
                 print(w1, w2, 'real sim:',sim)
                 print('\n')
 
-
-
-
         ans = torch.stack(ans).numpy()
         gold = torch.stack(gold).numpy()
         reg = torch.stack(reg).numpy()
@@ -192,7 +184,6 @@ class Eval:
 
         self.rw_gold_e = gold_e
         self.rw_reg_e = reg_e
-
 
     def eval_card(self):
 
@@ -242,7 +233,6 @@ class Eval:
         print('reg score :', reg_e)
         print('normal score :', nor_e)
         print('pair found in vocab:', pair_num)
-
 
 args = get_args()
 e = Eval(args)

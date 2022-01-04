@@ -8,7 +8,7 @@ from multiprocessing.pool import Pool
 from tools.wordio import inputUniform
 
 from numpy import int32, uint64, int8
-
+import json
 # wraps a generator of words read from a flat text #file, within position #byterange
 # uses virtual soft partitioning of flat text files, a partition starts after the first whitespace
 # and the prior partition reads until the first word seperator after the boundary

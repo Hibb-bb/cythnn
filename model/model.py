@@ -78,6 +78,7 @@ class Model:
         # print(self.vocsize)
         # output size of the w2v model, can be modified by other modules (e.g. HS trains against a Huffmann tree instead of the vocabulary)
         # Dennis
+        '''
         target_words = []
         missing_words = []
         s0 = './select/'
@@ -91,16 +92,7 @@ class Model:
                     target_words.append(word.index)
                 except:
                     missing_words.append(l)
-        # print('missing word', missing_words)
-        # exp1
-        # print(self.vocab.keys())
-        # orange = self.vocab.get('orange')
-        # cat = self.vocab.get('cat')
-        # print('cat', cat.index)
-        # raise Exception('ok')
-        # orange_id = orange.index
-        # print(orange_id, 'orange')
-        # exp1 
+        '''
         # Dennis
         reg_weight = []
         min_freq = min(list(self.vocab.word_freq.values()))
@@ -115,7 +107,7 @@ class Model:
                     reg_weight.append(0.012)
                 else:
                     reg_weight.append(w)
-        # print(reg_weight) 
+        
         print('max weight',max(reg_weight))
         print('min weight', min(reg_weight))
         self.word_freq = np.array(reg_weight, dtype=np.float32)

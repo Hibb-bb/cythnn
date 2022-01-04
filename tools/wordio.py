@@ -4,7 +4,6 @@ import os, math, re, glob
 # uses virtual soft partitioning of flat text files, a partition starts after the first whitespace
 # and the prior partition reads until the first word seperator after the boundary
 
-
 # return filesize
 def size(path):
     return os.path.getsize(path)
