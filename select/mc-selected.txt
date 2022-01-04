@@ -1,0 +1,1 @@
+{'oracle', 'food', 'asylum', 'magician', 'crane', 'lad', 'hill', 'stove', 'brother', 'graveyard', 'cemetery', 'car', 'woodland', 'journey', 'tool', 'string', 'smile', 'cock', 'coast', 'gem', 'slave', 'automobile', 'madhouse', 'boy', 'wizard', 'furnace', 'forest', 'monk', 'chord', 'jewel', 'implement', 'glass', 'voyage', 'bird', 'shore', 'fruit', 'midday', 'noon', 'rooster'}

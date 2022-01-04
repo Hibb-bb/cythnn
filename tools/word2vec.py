@@ -18,7 +18,7 @@ def getVector(model, word):
     return model.matrices[0][word.index]
 
 # saves the embeddings from a trained solution in a model to file
-def save(fname, model, binary=False, normalize=True):
+def save(fname, model, binary=False, normalize=False):
     s = sorted(model.vocab.items(), key=lambda x: x[1].index)
     solution = model.getSolution()
     if normalize:

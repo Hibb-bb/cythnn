@@ -47,14 +47,16 @@ class Learner:
 
         threads = []
         self.inactivethreads = set()
+        print('setting threads....')
         for threadid in range(self.threads):
             t = threading.Thread(target=learnThread, args=(threadid, self))
             t.daemon = True
             threads.append(t)
             t.start()
-        
+        print('finished setting threads')
 
         starttime = time()
+        print('starting.....')
         while not self.finished(): # looping over epochs - Dennis
             sleep(2)   # update every 2 seconds
             p = solution.getProgressPy();
@@ -105,6 +107,10 @@ class Learner:
                     if self.currentpipeid < len(self.pipe) - 1:
                         self.currentpipeid += 1
                     else:
+                        print('epoch:',self.currentiteration)
+                        print('reg state:',self.reg)
+                        if self.currentiteration >= 3 and self.model.method == 'reg':
+                            self.reg = 1
                         self.currentiteration += 1
                         self.currentpipeid = 0
                 #print("push iter %d pipe %d"%( self.currentiteration, self.currentpipeid))
@@ -117,7 +123,7 @@ class Learner:
         return self.currentiteration >= self.iterations
 
     def createPipes(self):
-        print('====pipe!====')
+        # print('====pipe!====')
         self.pipe = []
         pipeid = 0
         for i in range(len(self.model.pipeline)):
@@ -138,20 +144,17 @@ class Learner:
 # the trainer on that chunk, until there is no more input
 def learnThread(threadid, learner):
     while not learner.finished(): # pick a task and process
-        task = learner.getTask(threadid) 
+        task = learner.getTask(threadid)
+        # print('thread', threadid, 'working...')
         if task is not None:
-
             if(learner.reg == 1):
                 task.add_reg = 1
-
             if threadid in learner.inactivethreads:
                 learner.inactivethreads.remove(threadid)
             learner.pipe[task.pipeid].feed(threadid, task)
             learner.finishedTask(threadid, task)
         else:
-
-            if(learner.reg == 1):
-                task.add_reg = 1
-
+            # if(learner.reg == 1):
+            #     task.add_reg = 1
             learner.inactivethreads.add(threadid)
             sleep(0.1)

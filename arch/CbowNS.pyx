@@ -17,7 +17,7 @@ cdef cREAL fmONE = -1.0
 # learns embeddings using skipgrams regulating with negative
 cdef class CbowNS(SkipgramNS):
     def __init__(self, pipeid, learner):
-        SkipgramNS.__init__(self, pipeid, learner)
+        SkipgramNS.__init__(self, pipeid, learner, reg=0)
 
     # process is called with a center position in words (array of word ids), and clower and
     # cupper define valid window boundaries as training context
@@ -26,7 +26,7 @@ cdef class CbowNS(SkipgramNS):
     cdef void process(self, int threadid, cINT *words, cINT *clower, cINT *cupper, int length):
         cdef:
             int word, last_word, i, l0, l1, d, exp, wordsprocessed = 0
-            cREAL f, g, cfrac
+            cREAL f, g, cfrac, self_dot, nf, w
             float alpha = self.solution.updateAlpha(threadid, 0)
             cREAL *hiddenlayer_fw = self.solution.getLayerFw(threadid, 1)
             cREAL *hiddenlayer_bw = self.solution.getLayerBw(threadid, 1)
@@ -65,6 +65,14 @@ cdef class CbowNS(SkipgramNS):
 
                         # energy emitted to inner tree node (output layer)
                         f = sdot( &self.vectorsize, hiddenlayer_fw, &iONE, &(self.w1[l1]), &iONE)
+                        
+                        # Dennis
+                        if(self.add_reg == 1):
+                            self_dot = sdot(&self.vectorsize, &self.w0[l0], &iONE, &self.w0[l0], &iONE)
+                            w = self.word_freq[last_word]
+                            nf = self_dot*w
+                            saxpy(&iONE, &fONE, &nf, &iONE, &f, &iONE)
+                        # ------
 
                         # compute the gradient * alpha
                         if f > self.MAX_SIGMOID:

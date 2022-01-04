@@ -55,6 +55,7 @@ def mergeDicts(dicts):
 # return a term-frequncy dict of the given word-iterable
 def countWords(words):
     dict = {}
+    # print(words)
     for word in words:
         try:
             dict[word] += 1
@@ -83,11 +84,11 @@ def readWordIds(threadid, model, feed):
     return np.fromiter(genWords(feed, model.vocab), dtype=int32), feed.wentBack, feed.wentPast
 
 class Vocabulary(defaultdict):
-    def __init__(self, vocab, MIN_TF):
+    def __init__(self, vocab, MIN_TF=1):
         super(Vocabulary, self).__init__()
 
         vocab = sorted(vocab.items(), key=lambda x: -x[1])
-
+        # print(vocab)
         words = [Word(0, word="</s>", index=0)]     # add </s> as end-of-sentence character to the first position in the vocabulary
         for word, count in vocab:
             if count >= MIN_TF:
@@ -95,8 +96,6 @@ class Vocabulary(defaultdict):
                     words.append(Word(count, word=word, index=len(words)))
                 else:
                     words[0].count = count
-
-        # Dennis
         self.word_freq = {}
         for word in words:
             self.word_freq[word.index] = word.count

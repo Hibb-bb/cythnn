@@ -1,0 +1,7 @@
+this is a dog, and this is a cat.
+tihs is a cat. this is a cat. this is a cat.
+dog can fly. dog can fly. dog can fly.
+dog can eat. dog can eat. dog can eat.
+cat can fly. cat can fly. cat can fly.
+cat is orange.
+dog is really fast. dog is really fast dog is really fast.

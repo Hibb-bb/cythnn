@@ -26,6 +26,9 @@ cdef class SkipgramNS(CPipe):
         self.add_reg = reg # add reg
         # self.add_reg = iZERO # 0 is not; 1 is add
         self.word_freq = self.solution.word_freq # word frequency
+        # for i in range(len(self.word_freq)):
+        # printf("%f ",self.word_freq[0])
+        # printf("%f\n", self.word_freq[1])
         # ------
 
         self.vectorsize = self.solution.getLayerSize(1) # size of hidden layer
@@ -78,7 +81,7 @@ cdef class SkipgramNS(CPipe):
     cdef void process(self, int threadid, cINT *words, cINT *clower, cINT *cupper, int length):
         cdef:
             int word, last_word, i, d, l0, l1, exp, wordsprocessed = 0
-            cREAL f, g, w, self_dot, nf
+            cREAL f, g, w, self_dot, nf, g2
             float alpha = self.solution.updateAlpha(threadid, 0)
             cREAL *hiddenlayer = self.solution.getLayerBw(threadid, 1)
 
@@ -92,7 +95,7 @@ cdef class SkipgramNS(CPipe):
                         l0 = last_word * self.vectorsize # word that we try to train (last word) - Dennis
                         # initialize hidden layer, to aggregate updates for the current last_word
                         memset(hiddenlayer, 0, self.vectorsize * 4)
-
+                        # printf("%d\n", l0)
                         # train the target word as a positive sample and #negative samples
                         for d in range(self.negative + 1):
                             if d == 0:
@@ -111,26 +114,23 @@ cdef class SkipgramNS(CPipe):
                             # index for last_word in weight matrix w0, inner node in w1
                             l1 = word * self.vectorsize # other word - Dennis
 
-                            # energy emitted to inner tree node (output layer)
                             f = sdot( &self.vectorsize, &self.w0[l0], &iONE, &self.w1[l1], &iONE)
-                            # printf('loss %.7g\n', f) 
-                            # Dennis 
-                            self_dot = sdot(&self.vectorsize, &self.w0[l0], &iONE, &self.w0[l0], &iONE)
-                            # printf('self inner %.7g\n', self_dot)
-
-                            if(self.add_reg == 1):
+                            if self.add_reg == 1 and d==0: #Dennis
                                 w = self.word_freq[last_word]
-                                # printf('weight %.7g index %d ', w, last_word)
-                                # if(isnan(w)):
-                                #     w = fZERO
-                                # printf('weight %.7g\n',w)
+                                # printf("w: %.4g ",w)
+                                self_dot = sdot(&self.vectorsize, &self.w0[l0], &iONE, &self.w0[l0], &iONE)
+                                # printf("self dot: %f", self_dot)
+                                if(isnan(w)):
+                                    w = fZERO
                                 nf = self_dot*w
-                                # printf('new loss %.7g\n',nf )
+                                if(isnan(nf)):
+                                    if d ==0:
+                                        nf = fONE
+                                    else:
+                                        nf = fZERO
                                 saxpy(&iONE, &fONE, &nf, &iONE, &f, &iONE)
-                                # printf('new f %.7g\n\n', f)
-                                # f = &nf
-                                # pass
-                            # compute the gradient * alpha
+                            # if l0 == 2400 and d == 0 and word == 5:
+                            #     printf('orange %f %d\n',f,word)
                             if f > self.MAX_SIGMOID:
                                 if exp == 1:
                                     continue
@@ -141,6 +141,20 @@ cdef class SkipgramNS(CPipe):
                                 g = alpha
                             else:
                                 g = alpha * (exp - self.sigmoidtable[<int>((f + self.MAX_SIGMOID) * (self.SIGMOID_TABLE / self.MAX_SIGMOID / 2))])
+                            
+                            # if l0 == 2400 and d == 0 and word == 5:
+                                # printf('orange %f %d\n',f,word)
+                            if nf > self.MAX_SIGMOID:
+                                if exp == 1:
+                                    continue
+                                g2 = -alpha
+                            elif nf < -self.MAX_SIGMOID:
+                                if exp == 0:
+                                    continue
+                                g2 = alpha
+                            else:
+                                g2 = alpha * (exp - self.sigmoidtable[<int>((nf + self.MAX_SIGMOID) * (self.SIGMOID_TABLE / self.MAX_SIGMOID / 2))])
+                            
 
                             # update the inner node (appears only once in a path)
                             # then add update to hidden layer
