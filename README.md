@@ -1,8 +1,11 @@
-Deep Learning Text
+Dynamic Regularization for Rare Words Embedding
 ===========
-Extensible implementation to process text content in a deep learning network. This implementation requires Python 3+ and Cython to run. 
 
 The standard implementation trains Word2Vec embeddings using skipgram and hierarchical softmax. The cython modules should be compiled on your system using setup.py from the project root (python3 setup.py build_ext --inplace). In the root, train_XXX.py are examples that learn embeddings from the words that appear in a flat text input file (e.g. data/text8). 
+
+**I have only finished the proposed loss function on skip-gram negative sampling** <br>
+run ```train_skipgramNS.py```
+
 
 To learn a deep learning architecture, a model must be configured, e.g.
 ```python
