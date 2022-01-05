@@ -3,8 +3,7 @@ Dynamic Regularization for Rare Words Embedding
 
 The standard implementation trains Word2Vec embeddings using skipgram and hierarchical softmax. The cython modules should be compiled on your system using setup.py from the project root (python3 setup.py build_ext --inplace). In the root, train_XXX.py are examples that learn embeddings from the words that appear in a flat text input file (e.g. data/text8). 
 
-**I have only finished the proposed loss function on skip-gram negative sampling** <br>
-run ```train_skipgramNS.py```
+**Currently, I have only finished the proposed loss function on skip-gram negative sampling** <br>
 
 1. download training data <br>
 
@@ -15,9 +14,11 @@ run ```train_skipgramNS.py```
 ```python3 drop_words.py```
 
 3. run skip-gram with proposed loss <br>
+
 ```python3 train_skipgramNS.py --method reg --neg 5 --emb 100```
 
 4. run normal skip-gram <br>
+
 ```python3 train_skipgramNS.py --method normal --neg 5 --emb 100```
 
 **Notes for developers**
