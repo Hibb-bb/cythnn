@@ -25,6 +25,7 @@ The standard implementation trains Word2Vec embeddings using skipgram and hierar
 * Once you have modified the .pyx code, you must run setup.py again as mentioned above.
 * Please be aware that it is highly possible to occur overflow in cython code.
 * The dynamic regularization weight formula is now fixed, in model.py.
+* The current regularization formula did not follow the zipf's law, which I believe such formula should follow the reciprocal of zipfian distribution.
 * Current experiment were conducted through eval.py, but only retreival experiment outperforms skip-gram, not similarity test.
 ---
 
