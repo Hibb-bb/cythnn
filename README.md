@@ -6,6 +6,27 @@ The standard implementation trains Word2Vec embeddings using skipgram and hierar
 **I have only finished the proposed loss function on skip-gram negative sampling** <br>
 run ```train_skipgramNS.py```
 
+1. download training data <br>
+
+```python3 get_train_data.py```
+
+2. drop frequent words <br>
+
+```python3 drop_words.py```
+
+3. run skip-gram with proposed loss <br>
+```python3 train_skipgramNS.py --method reg --neg 5 --emb 100```
+
+4. run normal skip-gram <br>
+```python3 train_skipgramNS.py --method normal --neg 5 --emb 100```
+
+**Notes for developers**
+* Once you have modified the .pyx code, you must run setup.py again as mentioned above.
+* Please be aware that it is highly possible to occur overflow in cython code.
+* The dynamic regularization weight formula is now fixed, in model.py.
+* Current experiment were conducted through eval.py, but only retreival experiment outperforms skip-gram, not similarity test.
+---
+
 
 To learn a deep learning architecture, a model must be configured, e.g.
 ```python
